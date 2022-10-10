@@ -161,7 +161,7 @@ pub struct Embed { // https://discord.com/developers/docs/resources/channel#embe
     pub fields: Option<Vec<EmbedField>>,
 }
 
-pub struct Component {
+pub struct Component { 
     
 }
 
@@ -170,5 +170,5 @@ pub struct Attachment {
 }
 
 impl Interaction {
-
+    pub fn get_data(&self) -> Result<&ApplicationCommandData, >
 }

@@ -3,7 +3,7 @@ use worker::*;
 
 mod utils;
 mod bot;
-mod interaction;
+mod discord;
 
 fn log_request(req: &Request) {
     console_log!(

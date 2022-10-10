@@ -10,3 +10,23 @@ cfg_if! {
         pub fn set_panic_hook() {}
     }
 }
+
+pub enum Error {
+    EnvironmentVariableNotFound(String),
+    HeaderNotFound(String),
+    JsonFailed(serde_json::Error),
+    PayloadError(String),
+    VerificationFailed(VerificationError),
+    InteractionFailed(InteractionError)
+}
+
+pub enum InteractionError {
+    CommandNotFound(String),
+    CloudflareError(worker::Error),
+    DiscordError(String),
+    Error(),
+}
+
+pub enum VerificationError {
+    ParseError()
+}
