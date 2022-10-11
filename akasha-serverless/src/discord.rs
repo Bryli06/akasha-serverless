@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 
 pub enum ApplicationCommandOptionType { // https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-type
     SubCommand = 1,
@@ -58,6 +59,7 @@ pub enum ChannelType { //https://discord.com/developers/docs/resources/channel#c
     GuildForum = 15,
 }
 
+#[derive(Deserialize, Serialize)]
 pub struct Interaction { //https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-structure
     pub interaction_type: InteractionType,
     pub data: Option<InteractionData>,
@@ -169,6 +171,18 @@ pub struct Attachment {
 
 }
 
-impl Interaction {
-    pub fn get_data(&self) -> Result<&ApplicationCommandData, >
+pub struct InteractionResponse {
+    pub interaction_callback_type: InteractionCallbackType,
+    pub data: Option<MessagesInteractionCallbackData>,
 }
+
+pub enum InteractionCallbackType {
+    Pong = 1,
+    ChannelMessageWithSource = 4,
+    DeferredChannelMessageWithSource = 5,
+    DeferredUpdateMessage = 6,
+    UpdateMessage = 7,
+    ApplicationCommandAutocompleteResult = 8,
+    Modal = 9,
+}
+

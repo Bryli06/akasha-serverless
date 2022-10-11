@@ -1,4 +1,6 @@
 use cfg_if::cfg_if;
+use ed25519_dalek::{SignatureError, ed25519};
+use hex::FromHexError;
 
 cfg_if! {
     // https://github.com/rustwasm/console_error_panic_hook#readme
@@ -9,6 +11,12 @@ cfg_if! {
         #[inline]
         pub fn set_panic_hook() {}
     }
+}
+
+pub enum HttpStatusCode {
+    BadRequest = 400,
+    Unauthorized = 401,
+    InternalServerError = 500,
 }
 
 pub enum Error {
@@ -24,9 +32,32 @@ pub enum InteractionError {
     CommandNotFound(String),
     CloudflareError(worker::Error),
     DiscordError(String),
-    Error(),
+    Error(String),
 }
 
 pub enum VerificationError {
-    ParseError()
+    ParseError(FromHexError),
+    InvalidKey(SignatureError),
+    InvalidSignature(ed25519::Error),
+}
+
+pub struct HttpError {
+    pub status: HttpStatusCode,
+    reason: Error
+}
+
+impl From<Error> for HttpError {
+    fn from(reason: Error) -> HttpError {
+        let status = match &reason {
+            Error::HeaderNotFound(_) => HttpStatusCode::BadRequest,
+            Error::JsonFailed(_) => HttpStatusCode::BadRequest,
+            Error::PayloadError(_) => HttpStatusCode::BadRequest,
+            Error::VerificationFailed(_) => HttpStatusCode::Unauthorized,
+            _ => HttpStatusCode::InternalServerError,
+        };
+        HttpError {
+            status,
+            reason, 
+        }
+    }
 }
