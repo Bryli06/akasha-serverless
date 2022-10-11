@@ -1,3 +1,5 @@
+use core::fmt;
+
 use cfg_if::cfg_if;
 use ed25519_dalek::{SignatureError, ed25519};
 use hex::FromHexError;
@@ -13,12 +15,14 @@ cfg_if! {
     }
 }
 
+#[derive(Debug)]
 pub enum HttpStatusCode {
     BadRequest = 400,
     Unauthorized = 401,
     InternalServerError = 500,
 }
 
+#[derive(Debug)]
 pub enum Error {
     EnvironmentVariableNotFound(String),
     HeaderNotFound(String),
@@ -28,6 +32,7 @@ pub enum Error {
     InteractionFailed(InteractionError)
 }
 
+#[derive(Debug)]
 pub enum InteractionError {
     CommandNotFound(String),
     CloudflareError(worker::Error),
@@ -35,12 +40,14 @@ pub enum InteractionError {
     Error(String),
 }
 
+#[derive(Debug)]
 pub enum VerificationError {
     ParseError(FromHexError),
     InvalidKey(SignatureError),
     InvalidSignature(ed25519::Error),
 }
 
+#[derive(Debug)]
 pub struct HttpError {
     pub status: HttpStatusCode,
     reason: Error
@@ -59,5 +66,11 @@ impl From<Error> for HttpError {
             status,
             reason, 
         }
+    }
+}
+
+impl fmt::Display for HttpError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "An error occured: {:?}", self.reason)
     }
 }
