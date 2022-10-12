@@ -41,7 +41,7 @@ impl Interaction {
 
                         return Ok( InteractionResponse {
                             interaction_callback_type: InteractionCallbackType::ChannelMessageWithSource,
-                            data: Some(CallbackData::Message(data)),
+                            data: Some(CallbackData::from(data)),
                         })
                     }
                 }
@@ -71,7 +71,7 @@ impl Interaction {
 
                         return Ok( InteractionResponse {
                             interaction_callback_type: InteractionCallbackType::ApplicationCommandAutocompleteResult,
-                            data: Some(CallbackData::Autocomplete(data)),
+                            data: Some(CallbackData::from(data)),
                         })
                     }
                 }

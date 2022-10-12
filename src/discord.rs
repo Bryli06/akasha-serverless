@@ -33,7 +33,7 @@ pub struct ApplicationCommandOption {// https://discord.com/developers/docs/inte
     pub channel_types: Option<Vec<ChannelType>>
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Clone)]
 pub struct ApplicationCommandOptionChoice { // https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-choice-structure
     pub name: String,
     pub value: String
@@ -143,7 +143,7 @@ pub struct Member {
     pub user: Option<User>,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Clone)]
 pub enum EmbedType {
     Rich,
     Image,
@@ -153,34 +153,34 @@ pub enum EmbedType {
     Link,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Clone)]
 pub struct EmbedFooter { //https://discord.com/developers/docs/resources/channel#embed-object-embed-footer-structure
     pub text: String,
     pub icon_url: Option<String>,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Clone)]
 pub struct EmbedImage { //https://discord.com/developers/docs/resources/channel#embed-object-embed-image-structure
     pub url: String,
     pub height: Option<String>,
     pub width: Option<String>,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Clone)]
 pub struct EmbedThumbnail { //https://discord.com/developers/docs/resources/channel#embed-object-embed-thumbnail-structure
     pub url: String,
     pub height: Option<String>,
     pub width: Option<String>,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Clone)]
 pub struct EmbedField { // https://discord.com/developers/docs/resources/channel#embed-object-embed-field-structure
     pub name: String,
     pub value: String,
     pub inline: Option<bool>,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Clone)]
 pub struct Embed { // https://discord.com/developers/docs/resources/channel#embed-object
     pub title: Option<String>,
     #[serde(rename = "type")]
@@ -194,12 +194,12 @@ pub struct Embed { // https://discord.com/developers/docs/resources/channel#embe
     pub fields: Option<Vec<EmbedField>>,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Clone)]
 pub struct Component { 
     
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Clone)]
 pub struct Attachment {
 
 }
@@ -212,9 +212,36 @@ pub struct InteractionResponse {
 }
 
 #[derive(Deserialize, Serialize)]
-pub enum CallbackData {
-    Message (MessagesInteractionCallbackData),
-    Autocomplete (Option<AutocompleteInteractionCallbackData>),
+pub struct CallbackData { //combine MessagesInteractionCallbackData and AutocompleteInteractionCallbackData
+    pub choices: Option<Vec<ApplicationCommandOptionChoice>>,
+    pub content: Option<String>,
+    pub embeds: Option<Vec<Embed>>,
+    pub components: Option<Vec<Component>>, 
+    pub attachment: Option<Vec<Attachment>>
+}
+
+impl From<MessagesInteractionCallbackData> for CallbackData {
+    fn from(data: MessagesInteractionCallbackData) -> CallbackData {
+        CallbackData { 
+            choices: None, 
+            content: data.content.clone(), 
+            embeds: data.embeds.clone(), 
+            components: data.components.clone(), 
+            attachment: data.attachment.clone(), 
+        }
+    }
+}
+
+impl From<AutocompleteInteractionCallbackData> for CallbackData {
+    fn from(data: AutocompleteInteractionCallbackData) -> CallbackData {
+        CallbackData {
+            choices: Some(data.choices.clone()),
+            content: None,
+            embeds: None,
+            components: None,
+            attachment: None,
+        }
+    }
 }
 
 #[derive(Serialize_repr, Deserialize_repr)]
