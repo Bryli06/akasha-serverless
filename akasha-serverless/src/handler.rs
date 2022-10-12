@@ -85,6 +85,7 @@ impl Interaction {
         match self.interaction_type {
             InteractionType::Ping => Ok(self.ping_handler()),
             InteractionType::ApplicationCommand => self.command_handler(ctx).await.map_err(Error::InteractionFailed),
+            InteractionType::ApplicationCommandAutocomplete => self.handle_autocomplete(ctx).await.map_err(Error::InteractionFailed),
             _ => Err(Error::PayloadError("Interaction not implemented".to_string())),
         }
     }

@@ -18,10 +18,6 @@ main = "./shim.mjs"
 globs = ["**/*.wasm"]
 type = "CompiledWasm"
 
-[env.local.vars]
-PUBLIC_KEY = "c1c2bc07e187e98c2ca7351184609b460aa3ecb254a3937a140e7c24b0dac10f"
-DISCORD_TOKEN = "ODgxMzU1MTk4MTgwNzY1NzM2.GUGs2X.jMk1wpcUMZeOT3n4qsbi-vyfj9wKq5KBtDh1Tc"
-DISCORD_APPLICATION_ID = "881355198180765736"
 
 # read more about configuring your Worker via wrangler.toml at:
 # https://developers.cloudflare.com/workers/cli-wrangler/configuration

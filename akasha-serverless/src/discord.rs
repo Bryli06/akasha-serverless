@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-#[derive(Deserialize, Serialize, Clone)]
+#[derive(Deserialize_repr, Serialize_repr, Clone)]
+#[repr(u8)]
 pub enum ApplicationCommandOptionType { // https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-type
     SubCommand = 1,
     SubCommandGroup = 2,
@@ -25,10 +26,10 @@ pub struct ApplicationCommandOption {// https://discord.com/developers/docs/inte
     pub options: Option<Vec<ApplicationCommandOption>>,
     pub autocomplete: Option<bool>,
     pub required: Option<bool>,
-    pub min_value: Option<String>,
-    pub max_value: Option<String>,
-    pub min_length: Option<String>,
-    pub max_length: Option<String>,
+    pub min_value: Option<u64>,
+    pub max_value: Option<u64>,
+    pub min_length: Option<u64>,
+    pub max_length: Option<u64>,
     pub channel_types: Option<Vec<ChannelType>>
 }
 
@@ -52,7 +53,8 @@ pub struct MessagesInteractionCallbackData {//https://discord.com/developers/doc
     pub attachment: Option<Vec<Attachment>>
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Serialize_repr, Deserialize_repr)]
+#[repr(u8)]
 pub enum ChannelType { //https://discord.com/developers/docs/resources/channel#channel-object-channel-types
     GuildText = 0,
     DM = 1,

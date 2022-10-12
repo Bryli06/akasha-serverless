@@ -1,7 +1,6 @@
 use bot::Bot;
 use commands::get_commands;
 use discord::RegisteredCommand;
-use serde_json::json;
 use worker::*;
 
 mod utils;
@@ -66,6 +65,8 @@ pub async fn main(req: Request, env: Env, _ctx: worker::Context) -> Result<Respo
             let app_id = ctx.var("DISCORD_APPLICATION_ID")?.to_string();
             let token = ctx.var("DISCORD_TOKEN")?.to_string();
 
+            console_log!("App id: {}\nToken: {}", app_id, token);
+
             let api_url = format!("https://discord.com/api/v10/applications/{}/commands", app_id);
 
             let json = serde_json::to_string(&register)?;
@@ -82,6 +83,8 @@ pub async fn main(req: Request, env: Env, _ctx: worker::Context) -> Result<Respo
                 .text()
                 .await
                 .unwrap();
+
+            console_log!("Response trying to update commands: {}", response);
 
             Response::ok(&response)
         })
