@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-#[derive(Deserialize_repr, Serialize_repr, Clone)]
+#[derive(Deserialize_repr, Serialize_repr, Clone, Debug)]
 #[repr(u8)]
 pub enum ApplicationCommandOptionType { // https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-type
     SubCommand = 1,
@@ -81,7 +81,7 @@ pub struct Interaction { //https://discord.com/developers/docs/interactions/rece
     pub token: String,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct InteractionData { //combination of ApplicationCommandData, MessageComponentData, ModalSubmitData, and ApplicationCommandInteractionDataOption
     pub id: Option<String>,
     pub name: String,
@@ -119,7 +119,7 @@ pub struct ModalSubmitData { //https://discord.com/developers/docs/interactions/
 
 }
 
-#[derive(Deserialize, Serialize, Clone)]
+#[derive(Deserialize, Serialize, Clone, Debug)]
 pub struct ApplicationCommandInteractionDataOption { //https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-application-command-data-structure
     pub name: String,
     #[serde(rename = "type")]
@@ -187,7 +187,7 @@ pub struct Embed { // https://discord.com/developers/docs/resources/channel#embe
     pub embed_type: Option<EmbedType>,
     pub description: Option<String>,
     pub url: Option<String>,
-    pub color: Option<String>,
+    pub color: Option<u64>,
     pub footer: Option<EmbedFooter>,
     pub image: Option<EmbedImage>,
     pub thumbnail: Option<EmbedThumbnail>, 
@@ -232,10 +232,13 @@ impl From<MessagesInteractionCallbackData> for CallbackData {
     }
 }
 
-impl From<AutocompleteInteractionCallbackData> for CallbackData {
-    fn from(data: AutocompleteInteractionCallbackData) -> CallbackData {
+impl From<Option<AutocompleteInteractionCallbackData>> for CallbackData {
+    fn from(data: Option<AutocompleteInteractionCallbackData>) -> CallbackData {
         CallbackData {
-            choices: Some(data.choices.clone()),
+            choices: match data {
+                Some(data) => Some(data.choices.clone()),
+                None => None,
+            },
             content: None,
             embeds: None,
             components: None,

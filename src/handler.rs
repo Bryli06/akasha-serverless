@@ -1,3 +1,5 @@
+use worker::console_log;
+
 use crate::commands::{get_commands, Input};
 use crate::utils::{Error, InteractionError};
 use crate::discord::*;
@@ -53,6 +55,7 @@ impl Interaction {
     
     async fn handle_autocomplete(&self, ctx: &mut worker::RouteContext<()>) -> Result<InteractionResponse, InteractionError> {
         let data = self.get_data().map_err(|_| InteractionError::Error("No Data".to_string()))?;
+        console_log!("{:?}", data);
         match self.get_type() {
             InteractionType::ApplicationCommandAutocomplete => {
                 let commands = get_commands();
