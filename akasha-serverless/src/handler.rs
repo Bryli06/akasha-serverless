@@ -4,10 +4,14 @@ use crate::discord::*;
 
 
 impl Interaction {
-    pub fn get_data(&self) -> Result<&InteractionData, Error> {
+    fn get_data(&self) -> Result<&InteractionData, Error> {
         self.data
             .as_ref()
             .ok_or_else(|| Error::PayloadError("No data".to_string()))
+    }
+
+    fn get_type(&self) -> &InteractionType {
+        &self.interaction_type
     }
 
     fn ping_handler(&self) -> InteractionResponse {
@@ -18,9 +22,9 @@ impl Interaction {
     }
 
     async fn command_handler(&self, ctx: &mut worker::RouteContext<()>) -> Result<InteractionResponse, InteractionError> {
-        let interaction_data = self.get_data().map_err(|_| InteractionError::Error("No Data".to_string()))?;
-        match interaction_data {
-            InteractionData::ApplicationCommand(data) => {
+        let data = self.get_data().map_err(|_| InteractionError::Error("No Data".to_string()))?;
+        match self.get_type() {
+            InteractionType::ApplicationCommand => {
                 let commands = get_commands();
                 let input = Input {
                     ctx,
@@ -48,9 +52,9 @@ impl Interaction {
     }
     
     async fn handle_autocomplete(&self, ctx: &mut worker::RouteContext<()>) -> Result<InteractionResponse, InteractionError> {
-        let interaction_data = self.get_data().map_err(|_| InteractionError::Error("No Data".to_string()))?;
-        match interaction_data {
-            InteractionData::ApplicationCommandInteraction(data) => {
+        let data = self.get_data().map_err(|_| InteractionError::Error("No Data".to_string()))?;
+        match self.get_type() {
+            InteractionType::ApplicationCommandAutocomplete => {
                 let commands = get_commands();
                 let input = Input {
                     ctx,

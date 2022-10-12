@@ -4,6 +4,8 @@ use crate::discord::*;
 
 use crate::utils::InteractionError;
 
+mod autocomplete_test;
+
 
 #[async_trait(?Send)]
 pub trait Command {
@@ -33,8 +35,8 @@ pub struct Input<'T> {
     pub member: Option<Member>,
     pub user: Option<User>,
     pub options: Option<Vec<ApplicationCommandInteractionDataOption>>,
-    pub guild_id: Option<u64>,
-    pub channel_id: Option<u64>,
+    pub guild_id: Option<String>,
+    pub channel_id: Option<String>,
 }
 
 impl Input<'_> {
@@ -53,6 +55,12 @@ impl Input<'_> {
         .map_err(|_| InteractionError::CloudflareError("KV put".into()))
         ?;
         Ok(())
+    }
+
+    pub fn get_options(&self, name: &str) -> Option<&str> {
+        match &self.options {
+            
+        }
     }
 }
 

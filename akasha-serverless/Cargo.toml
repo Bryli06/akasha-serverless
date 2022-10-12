@@ -25,6 +25,8 @@ hex = "0.4.3"
 reqwest = "0.11.12"
 async-trait = "0.1.57"
 serde = "1.0.145"
+thiserror = "1.0.37"
+serde_repr = "0.1.9"
 
 [profile.release]
 # Tell `rustc` to optimize for small code size.

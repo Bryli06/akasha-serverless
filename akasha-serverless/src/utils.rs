@@ -3,6 +3,7 @@ use core::fmt;
 use cfg_if::cfg_if;
 use ed25519_dalek::{SignatureError, ed25519};
 use hex::FromHexError;
+use thiserror::Error;
 
 cfg_if! {
     // https://github.com/rustwasm/console_error_panic_hook#readme
@@ -40,10 +41,13 @@ pub enum InteractionError {
     Error(String),
 }
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
 pub enum VerificationError {
-    ParseError(FromHexError),
-    InvalidKey(SignatureError),
+    #[error("Could not parse hex")]
+    ParseError(#[from] FromHexError),
+    #[error("Invalid Public Key")]
+    InvalidKey(#[from] SignatureError),
+    #[error("Invalid Signature")]
     InvalidSignature(ed25519::Error),
 }
 

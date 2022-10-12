@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use serde_repr::{Deserialize_repr, Serialize_repr};
 
 #[derive(Deserialize, Serialize, Clone)]
 pub enum ApplicationCommandOptionType { // https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-type
@@ -24,10 +25,10 @@ pub struct ApplicationCommandOption {// https://discord.com/developers/docs/inte
     pub options: Option<Vec<ApplicationCommandOption>>,
     pub autocomplete: Option<bool>,
     pub required: Option<bool>,
-    pub min_value: Option<u64>,
-    pub max_value: Option<u64>,
-    pub min_length: Option<u64>,
-    pub max_length: Option<u64>,
+    pub min_value: Option<String>,
+    pub max_value: Option<String>,
+    pub min_length: Option<String>,
+    pub max_length: Option<String>,
     pub channel_types: Option<Vec<ChannelType>>
 }
 
@@ -71,22 +72,26 @@ pub struct Interaction { //https://discord.com/developers/docs/interactions/rece
     #[serde(rename = "type")]
     pub interaction_type: InteractionType,
     pub data: Option<InteractionData>,
-    pub guild_id: Option<u64>,
-    pub channel_id: Option<u64>,
+    pub guild_id: Option<String>,
+    pub channel_id: Option<String>,
     pub member: Option<Member>,
     pub user: Option<User>,
     pub token: String,
 }
 
 #[derive(Deserialize, Serialize)]
-pub enum InteractionData {
-    ApplicationCommand (ApplicationCommandData),
-    MessageComponent (MessageComponentData),
-    ModalSubmit (ModalSubmitData),
-    ApplicationCommandInteraction (ApplicationCommandInteractionDataOption),
+pub struct InteractionData { //combination of ApplicationCommandData, MessageComponentData, ModalSubmitData, and ApplicationCommandInteractionDataOption
+    pub id: Option<String>,
+    pub name: String,
+    pub options: Option<Vec<ApplicationCommandInteractionDataOption>>,
+    #[serde(rename = "type")]
+    pub command_type: Option<ApplicationCommandOptionType>,
+    pub value: Option<String>, //can be string int double, parse in command handler
+    pub focused: Option<bool>, 
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize_repr, Serialize)]
+#[repr(u8)]
 pub enum InteractionType { //https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-type
     Ping = 1,
     ApplicationCommand = 2,
@@ -97,7 +102,7 @@ pub enum InteractionType { //https://discord.com/developers/docs/interactions/re
 
 #[derive(Deserialize, Serialize)]
 pub struct ApplicationCommandData { //https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-application-command-data-structure
-    pub id: u64,
+    pub id: String,
     pub name: String,
     pub options: Option<Vec<ApplicationCommandInteractionDataOption>>,
 }
@@ -125,9 +130,9 @@ pub struct ApplicationCommandInteractionDataOption { //https://discord.com/devel
 
 #[derive(Deserialize, Serialize, Clone)]
 pub struct User {
-    pub id: u64,
+    pub id: String,
     pub username: String,
-    pub dicriminator: String,
+    pub discriminator: String,
     pub bot: Option<bool>,
 }
 
@@ -155,15 +160,15 @@ pub struct EmbedFooter { //https://discord.com/developers/docs/resources/channel
 #[derive(Deserialize, Serialize)]
 pub struct EmbedImage { //https://discord.com/developers/docs/resources/channel#embed-object-embed-image-structure
     pub url: String,
-    pub height: Option<u64>,
-    pub width: Option<u64>,
+    pub height: Option<String>,
+    pub width: Option<String>,
 }
 
 #[derive(Deserialize, Serialize)]
 pub struct EmbedThumbnail { //https://discord.com/developers/docs/resources/channel#embed-object-embed-thumbnail-structure
     pub url: String,
-    pub height: Option<u64>,
-    pub width: Option<u64>,
+    pub height: Option<String>,
+    pub width: Option<String>,
 }
 
 #[derive(Deserialize, Serialize)]
@@ -180,7 +185,7 @@ pub struct Embed { // https://discord.com/developers/docs/resources/channel#embe
     pub embed_type: Option<EmbedType>,
     pub description: Option<String>,
     pub url: Option<String>,
-    pub color: Option<u64>,
+    pub color: Option<String>,
     pub footer: Option<EmbedFooter>,
     pub image: Option<EmbedImage>,
     pub thumbnail: Option<EmbedThumbnail>, 
@@ -210,7 +215,8 @@ pub enum CallbackData {
     Autocomplete (Option<AutocompleteInteractionCallbackData>),
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Serialize_repr, Deserialize_repr)]
+#[repr(u8)]
 pub enum InteractionCallbackType {
     Pong = 1,
     ChannelMessageWithSource = 4,
