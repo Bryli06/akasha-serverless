@@ -5,6 +5,7 @@ use crate::discord::*;
 use crate::utils::InteractionError;
 
 mod autocomplete_test;
+mod chances;    
 
 
 #[async_trait(?Send)]

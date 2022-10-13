@@ -34,9 +34,9 @@ pub struct ApplicationCommandOption {// https://discord.com/developers/docs/inte
 }
 
 #[derive(Deserialize, Serialize, Clone)]
-pub struct ApplicationCommandOptionChoice { // https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-choice-structure
+pub struct ApplicationCommandOptionChoice<T> { // https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-choice-structure
     pub name: String,
-    pub value: String
+    pub value: T, 
 
 }
 
