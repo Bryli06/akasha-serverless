@@ -22,15 +22,15 @@ impl Command for Chances {
                 autocomplete: Some(false),
                 description: "Which banner are you rolling on?".to_string(),
                 required: Some(true),
-                option_type: ApplicationCommandOptionType::Integer,
+                option_type: ApplicationCommandOptionType::String,
                 choices: Some(vec![
-                    ApplicationCommandOptionChoice<u64>{
+                    ApplicationCommandOptionChoice {
                         name: "5 star Character".to_string(),
-                        value: 0,
+                        value: "0".to_string(),
                     },
-                    ApplicationCommandOptionChoice<u64>{
+                    ApplicationCommandOptionChoice {
                         name: "5 star Weapon".to_string(),
-                        value: 1, 
+                        value: "1".to_string(), 
                     },
                 ]),  
                 min_value: None,
@@ -73,19 +73,19 @@ impl Command for Chances {
                 autocomplete: Some(false),
                 description: "Do you have guarentee or are you at 50/50".to_string(),
                 required: Some(true),
-                option_type: ApplicationCommandOptionType::Integer,
+                option_type: ApplicationCommandOptionType::String,
                 choices: Some(vec![
-                    ApplicationCommandOptionChoice<u64>{
+                    ApplicationCommandOptionChoice {
                         name: "Yes".to_string(),
-                        value: 1,
+                        value: "1".to_string(),
                     },
-                    ApplicationCommandOptionChoice<u64>{
+                    ApplicationCommandOptionChoice {
                         name: "No".to_string(),
-                        value: 0, 
+                        value: "0".to_string(), 
                     },
-                    ApplicationCommandOptionChoice<u64> {
+                    ApplicationCommandOptionChoice {
                         name: "N/A".to_string(),
-                        value: 0,
+                        value: "0".to_string(),
                     },
                 ]),  
                 min_value: None,
@@ -104,13 +104,13 @@ impl Command for Chances {
 
     async fn respond(&self, input: &Input) -> Result<MessagesInteractionCallbackData, InteractionError> {
         let embed = match input.get_options("banner") {
-            0 => five_star_character(
-                input.get_options("wishes"), 
-                input.get_options("pity"), 
-                input.get_options("guarentee")),
-            1 => five_star_weapon(
-                input.get_options("wishes"), 
-                input.get_options("pity")),
+            Some("0") => five_star_character(
+                parse_to_u32(input.get_options("wishes")), 
+                parse_to_u32(input.get_options("pity")), 
+                parse_to_u32(input.get_options("guarentee")),),
+            Some("1") => five_star_weapon(
+                parse_to_u32(input.get_options("wishes")), 
+                parse_to_u32(input.get_options("pity"))),
             _ => {
                 console_log!("Unknown banner");
                 Embed {
@@ -128,7 +128,7 @@ impl Command for Chances {
         };
 
         Ok(MessagesInteractionCallbackData {
-            content: Some("Hello".to_string()),
+            content: None,
             components: None,
             embeds: Some(vec![embed]),
             attachment: None,
@@ -137,7 +137,14 @@ impl Command for Chances {
 
 }
 
-fn five_star_character(wishes: u64, pity: u64, guarentee: bool) -> Embed {
+fn parse_to_u32(s: Option<&str>) -> u32 {
+    match s {
+        Some(s) => s.parse().unwrap(),
+        None => 0,
+    }
+}
+
+fn five_star_character(wishes: u32, pity: u32, guarentee: u32) -> Embed {
     Embed {
         title: Some("Hello".to_string()),
         embed_type: Some(EmbedType::Rich),
@@ -149,15 +156,25 @@ fn five_star_character(wishes: u64, pity: u64, guarentee: bool) -> Embed {
         thumbnail: None, 
         fields: Some(vec![
             EmbedField {
-                name: "Hello".to_string(),
-                value: "e".to_string(),
+                name: "Wishes".to_string(),
+                value: format!("{}", wishes),
+                inline: Some(true),
+            }, 
+            EmbedField {
+                name: "Pity".to_string(),
+                value: format!("{}", pity),
+                inline: Some(true),
+            },
+            EmbedField {
+                name: "Guarentee".to_string(),
+                value: format!("{}", guarentee),
                 inline: Some(true),
             }
         ]),
     }
 }
 
-fn five_star_weapon(wishes: u64, pity: u64) -> Embed {
+fn five_star_weapon(wishes: u32, pity: u32) -> Embed {
     Embed {
         title: Some("Hello".to_string()),
         embed_type: Some(EmbedType::Rich),
@@ -169,10 +186,15 @@ fn five_star_weapon(wishes: u64, pity: u64) -> Embed {
         thumbnail: None, 
         fields: Some(vec![
             EmbedField {
-                name: "Hello".to_string(),
-                value: "e".to_string(),
+                name: "Wishes".to_string(),
+                value: format!("{}", wishes),
                 inline: Some(true),
-            }
+            }, 
+            EmbedField {
+                name: "Pity".to_string(),
+                value: format!("{}", pity),
+                inline: Some(true),
+            },
         ]),
     }
 }

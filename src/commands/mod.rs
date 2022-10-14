@@ -79,6 +79,6 @@ impl Input<'_> {
 pub fn get_commands() -> Vec<Box<dyn Command + Sync>> {
     vec![
         Box::new(autocomplete_test::AutocompleteTest {}),
-
+        Box::new(chances::Chances {}),
     ]
 }
