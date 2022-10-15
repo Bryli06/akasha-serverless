@@ -5,6 +5,7 @@ use crate::discord::*;
 use crate::utils::InteractionError;
 
 mod chances;    
+mod invite;
 
 
 #[async_trait(?Send)]
@@ -78,5 +79,6 @@ impl Input<'_> {
 pub fn get_commands() -> Vec<Box<dyn Command + Sync>> {
     vec![
         Box::new(chances::Chances {}),
+        Box::new(invite::Invite {}),
     ]
 }
