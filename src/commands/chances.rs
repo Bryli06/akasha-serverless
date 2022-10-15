@@ -111,7 +111,7 @@ impl Command for Chances {
             Some(0) => five_star_character(
                 input.get_options("wishes").unwrap().as_u64().unwrap() as usize, 
                 input.get_options("pity").unwrap().as_u64().unwrap(), 
-                input.get_options("guarentee").unwrap().as_u64().unwrap(),),
+                input.get_options("guarentee").unwrap().as_u64().unwrap() as usize,),
             Some(1) => five_star_weapon(
                 input.get_options("wishes").unwrap().as_u64().unwrap(), 
                 input.get_options("pity").unwrap().as_u64().unwrap(),),
@@ -142,7 +142,7 @@ impl Command for Chances {
 }
 
 
-fn five_star_character(wishes: usize, pity: u64, guarentee: u64) -> Embed {
+fn five_star_character(wishes: usize, pity: u64, guarentee: usize) -> Embed {
     let P = 0.006;
     let ramp_rate = 0.06;
 
@@ -180,34 +180,33 @@ fn five_star_character(wishes: usize, pity: u64, guarentee: u64) -> Embed {
     }
 
     let five_star_prob = gf_coefficents.slice(s![.., ..(wishes+pity as usize+1)]).sum_axis(Axis(1));
+    
+    let mut cons: Vec<EmbedField> = Vec::new(); 
+    for i in 0..7 {
+        let mut temp = 0.0;
+        for j in 0..(i+2-guarentee) {
+            temp += 100.0 * (1..=j.min((i + 1 - guarentee) - j))
+                .fold(1, |acc, val| acc * ((i + 1 - guarentee) - val + 1) / val) as f64 
+                / (2 << (i - guarentee)) as f64 * five_star_prob[i+j];
+        }
+        cons.push(EmbedField { 
+            name: format!("C{}", i), 
+            value: round_sigfig(temp, 4), 
+            inline: Some(true), 
+        })
+    }
 
     console_log!("{:?}", five_star_prob);
     Embed {
-        title: Some("Hello".to_string()),
+        title: Some("Character chances calculator".to_string()),
         embed_type: Some(EmbedType::Rich),
-        description: Some("E".to_string()),
+        description: Some("If you wish to understand the math behind this calculation, view the explanation [here](https://drive.google.com/file/d/1EECcjNVpfiOTqRoS48hHWqH2Ake902vq/view?usp=sharing)".to_string()),
         url: None,
         color: Some(0x696969),
         footer: None,
         image: None,
         thumbnail: None, 
-        fields: Some(vec![
-            EmbedField {
-                name: "Wishes".to_string(),
-                value: format!("{}", wishes),
-                inline: Some(true),
-            }, 
-            EmbedField {
-                name: "Pity".to_string(),
-                value: format!("{}", pity),
-                inline: Some(true),
-            },
-            EmbedField {
-                name: "Guarentee".to_string(),
-                value: format!("{}", guarentee),
-                inline: Some(true),
-            }
-        ]),
+        fields: Some(cons),
     }
 }
 
@@ -234,4 +233,11 @@ fn five_star_weapon(wishes: u64, pity: u64) -> Embed {
             },
         ]),
     }
+}
+
+fn round_sigfig(num: f64, sigfigs: isize) -> String {
+    let leading_digits = num.abs().log10().ceil() as isize; // Treat fractions as negative leading digits so we have the correct total number of significant digits
+    let trailing_digits = if leading_digits > sigfigs { 0 } else { (sigfigs - leading_digits) as usize };
+    
+    format!("{:.*}", trailing_digits, num)
 }
