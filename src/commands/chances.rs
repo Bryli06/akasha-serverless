@@ -261,7 +261,7 @@ fn five_star_weapon(wishes: usize, pity: u64) -> Embed {
     let mut cons: Vec<EmbedField> = Vec::new(); 
     for i in 0..5 {
         cons.push(EmbedField { 
-            name: format!("C{}", i), 
+            name: format!("R{}", i), 
             value: round_sigfig(100.0 * path_gf_coefficents.index_axis_mut(Axis(0), i).slice(s![1i32..])
                 .dot(&five_star_prob), 4), 
             inline: Some(true), 
