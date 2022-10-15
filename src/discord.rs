@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use serde_json::value;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
 #[derive(Deserialize_repr, Serialize_repr, Clone, Debug)]
@@ -36,7 +37,7 @@ pub struct ApplicationCommandOption {// https://discord.com/developers/docs/inte
 #[derive(Deserialize, Serialize, Clone)]
 pub struct ApplicationCommandOptionChoice { // https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-choice-structure
     pub name: String,
-    pub value: String, 
+    pub value: value::Value, 
 
 }
 
@@ -88,7 +89,7 @@ pub struct InteractionData { //combination of ApplicationCommandData, MessageCom
     pub options: Option<Vec<ApplicationCommandInteractionDataOption>>,
     #[serde(rename = "type")]
     pub command_type: Option<ApplicationCommandOptionType>,
-    pub value: Option<String>, //can be string int double, parse in command handler
+    pub value: Option<value::Value>, //can be string int double, parse in command handler
     pub focused: Option<bool>, 
 }
 
@@ -124,7 +125,7 @@ pub struct ApplicationCommandInteractionDataOption { //https://discord.com/devel
     pub name: String,
     #[serde(rename = "type")]
     pub command_type: ApplicationCommandOptionType,
-    pub value: Option<String>, //can be string int double, parse in command handler
+    pub value: Option<value::Value>, //can be string int double, parse in command handler
     pub options: Option<Vec<ApplicationCommandInteractionDataOption>>,
     pub focused: Option<bool>, 
 

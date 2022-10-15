@@ -1,10 +1,9 @@
 use async_trait::async_trait;
-
+use serde_json::value::Value;
 use crate::discord::*;
 
 use crate::utils::InteractionError;
 
-mod autocomplete_test;
 mod chances;    
 
 
@@ -58,7 +57,7 @@ impl Input<'_> {
         Ok(())
     }
 
-    pub fn get_options(&self, name: &str) -> Option<&str> {
+    pub fn get_options(&self, name: &str) -> Option<&Value> {
         match &self.options {
             Some(options) => {
                 for option in options {
@@ -78,7 +77,6 @@ impl Input<'_> {
 
 pub fn get_commands() -> Vec<Box<dyn Command + Sync>> {
     vec![
-        Box::new(autocomplete_test::AutocompleteTest {}),
         Box::new(chances::Chances {}),
     ]
 }
