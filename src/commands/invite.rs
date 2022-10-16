@@ -28,7 +28,8 @@ impl Command for Invite{
             content: Some("You can invite Akasha at <https://kusanalimains.com/invite/>.".to_string()),
             components: None,
             embeds: None,
-            attachment: None,
+            attachments: None,
+            flags: None,
         })
     }
 }
