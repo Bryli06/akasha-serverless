@@ -51,7 +51,8 @@ pub struct MessagesInteractionCallbackData {//https://discord.com/developers/doc
     pub content: Option<String>,
     pub embeds: Option<Vec<Embed>>,
     pub components: Option<Vec<Component>>, 
-    pub attachment: Option<Vec<Attachment>>
+    pub attachments: Option<Vec<Attachment>>,
+    pub flags: Option<u64>, //bit field
 }
 
 #[derive(Serialize_repr, Deserialize_repr)]

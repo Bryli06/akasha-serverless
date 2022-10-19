@@ -66,14 +66,14 @@ impl Command for Chances {
                 option_type: ApplicationCommandOptionType::Integer,
                 choices: None,  
                 min_value: Some(0),
-                max_value: Some(90),
+                max_value: Some(89),
                 min_length: None,
                 max_length: None,
                 options: None,
                 channel_types: None,
             },
             ApplicationCommandOption {
-                name: "guarentee".to_string(),
+                name: "guarantee".to_string(),
                 autocomplete: Some(false),
                 description: "Do you have guarentee or are you at 50/50".to_string(),
                 required: Some(true),
@@ -107,17 +107,17 @@ impl Command for Chances {
     }
 
     async fn respond(&self, input: &Input) -> Result<MessagesInteractionCallbackData, InteractionError> {
-        let embed = match input.get_options("banner").unwrap().as_u64() {
+        let (flags, embed) = match input.get_options("banner").unwrap().as_u64() {
             Some(0) => five_star_character(
                 input.get_options("wishes").unwrap().as_u64().unwrap() as usize, 
                 input.get_options("pity").unwrap().as_u64().unwrap(), 
-                input.get_options("guarentee").unwrap().as_u64().unwrap() as usize,),
+                input.get_options("guarantee").unwrap().as_u64().unwrap() as usize,),
             Some(1) => five_star_weapon(
                 input.get_options("wishes").unwrap().as_u64().unwrap() as usize, 
                 input.get_options("pity").unwrap().as_u64().unwrap(),),
             _ => {
                 console_log!("Unknown banner");
-                Embed {
+                (Some(1 << 6), Embed { //ephemeral
                     title: Some("Error".to_string()),
                     embed_type: Some(EmbedType::Rich),
                     description: Some("Got an unknown banner".to_string()),
@@ -127,7 +127,7 @@ impl Command for Chances {
                     image: None,
                     thumbnail: None, 
                     fields: None,
-                }
+                })
             }
         };
 
@@ -135,14 +135,15 @@ impl Command for Chances {
             content: None,
             components: None,
             embeds: Some(vec![embed]),
-            attachment: None,
+            attachments: None,
+            flags,
         })
     }
 
 }
 
 
-fn five_star_character(wishes: usize, pity: u64, guarentee: usize) -> Embed {
+fn five_star_character(wishes: usize, pity: u64, guarentee: usize) -> (Option<u64>, Embed) {
     let P = 0.006;
     let ramp_rate = 0.06;
 
@@ -195,20 +196,34 @@ fn five_star_character(wishes: usize, pity: u64, guarentee: usize) -> Embed {
         })
     }
 
-    Embed {
+    (None, Embed {
         title: Some("Character chances calculator".to_string()),
         embed_type: Some(EmbedType::Rich),
         description: Some("If you wish to understand the math behind this calculation, view the explanation [here](https://drive.google.com/file/d/1EECcjNVpfiOTqRoS48hHWqH2Ake902vq/view?usp=sharing)".to_string()),
         url: None,
-        color: Some(0x696969),
+        color: Some(0x198754),
         footer: None,
         image: None,
         thumbnail: None, 
         fields: Some(cons),
-    }
+    })
 }
 
-fn five_star_weapon(wishes: usize, pity: u64) -> Embed {
+fn five_star_weapon(wishes: usize, pity: u64) -> (Option<u64>, Embed) {
+    if pity >= 77 {
+        return  (Some(1 << 6), Embed { //ephemeral
+                    title: Some("Error".to_string()),
+                    embed_type: Some(EmbedType::Rich),
+                    description: Some(format!("Pity {} is greater than the maximum weapon pity of 77.", pity)),
+                    url: None,
+                    color: Some(0xcc0000),
+                    footer: None,
+                    image: None,
+                    thumbnail: None, 
+                    fields: None,
+                })
+    }
+
     let P = 0.007;
     let ramp_rate = 0.07;
 
@@ -268,17 +283,17 @@ fn five_star_weapon(wishes: usize, pity: u64) -> Embed {
         })
     }
 
-    Embed {
+    (None, Embed {
         title: Some("Weapon chances calculator".to_string()),
         embed_type: Some(EmbedType::Rich),
         description: Some("If you wish to understand the math behind this calculation, view the explanation [here](https://drive.google.com/file/d/1EECcjNVpfiOTqRoS48hHWqH2Ake902vq/view?usp=sharing)".to_string()),
         url: None,
-        color: Some(0x696969),
+        color: Some(0x198754),
         footer: None,
         image: None,
         thumbnail: None, 
         fields: Some(cons),
-    }
+    })
 }
 
 fn round_sigfig(num: f64, sigfigs: isize) -> String {
