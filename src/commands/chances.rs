@@ -198,7 +198,7 @@ fn five_star_character(wishes: usize, pity: u64, guarentee: usize) -> (Option<u6
     (None, Embed {
         title: Some("Character chances calculator".to_string()),
         embed_type: Some(EmbedType::Rich),
-        description: Some("If you wish to understand the math behind this calculation, view the explanation [here](https://drive.google.com/file/d/1EECcjNVpfiOTqRoS48hHWqH2Ake902vq/view?usp=sharing). You can invite the bot to your own server at <https://kusanalimains.com/invite/>.".to_string()),
+        description: Some("If you wish to understand the math behind this calculation, view the explanation [here](https://drive.google.com/file/d/1EECcjNVpfiOTqRoS48hHWqH2Ake902vq/view?usp=sharing). You can invite this bot at <https://kusanalimains.com/invite/>.".to_string()),
         url: None,
         color: Some(0x198754),
         footer: None,
@@ -285,7 +285,7 @@ fn five_star_weapon(wishes: usize, pity: u64) -> (Option<u64>, Embed) {
     (None, Embed {
         title: Some("Weapon chances calculator".to_string()),
         embed_type: Some(EmbedType::Rich),
-        description: Some("If you wish to understand the math behind this calculation, view the explanation [here](https://drive.google.com/file/d/1EECcjNVpfiOTqRoS48hHWqH2Ake902vq/view?usp=sharing)".to_string()),
+        description: Some("If you wish to understand the math behind this calculation, view the explanation [here](https://drive.google.com/file/d/1EECcjNVpfiOTqRoS48hHWqH2Ake902vq/view?usp=sharing). You can invite this bot at <https://kusanalimains.com/invite/>.".to_string()),
         url: None,
         color: Some(0x198754),
         footer: None,
