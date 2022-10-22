@@ -219,7 +219,7 @@ pub struct CallbackData { //combine MessagesInteractionCallbackData and Autocomp
     pub content: Option<String>,
     pub embeds: Option<Vec<Embed>>,
     pub components: Option<Vec<Component>>, 
-    pub attachment: Option<Vec<Attachment>>
+    pub attachments: Option<Vec<Attachment>>
 }
 
 impl From<MessagesInteractionCallbackData> for CallbackData {
@@ -229,7 +229,7 @@ impl From<MessagesInteractionCallbackData> for CallbackData {
             content: data.content.clone(), 
             embeds: data.embeds.clone(), 
             components: data.components.clone(), 
-            attachment: data.attachment.clone(), 
+            attachments: data.attachments.clone(), 
         }
     }
 }
@@ -244,7 +244,7 @@ impl From<Option<AutocompleteInteractionCallbackData>> for CallbackData {
             content: None,
             embeds: None,
             components: None,
-            attachment: None,
+            attachments: None,
         }
     }
 }
