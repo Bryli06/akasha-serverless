@@ -50,7 +50,7 @@ pub struct AutocompleteInteractionCallbackData { //https://discord.com/developer
 pub struct MessagesInteractionCallbackData {//https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-messages
     pub content: Option<String>,
     pub embeds: Option<Vec<Embed>>,
-    pub components: Option<Vec<Component>>, 
+    pub components: Option<Vec<ComponentResponse>>, 
     pub attachments: Option<Vec<Attachment>>,
     pub flags: Option<u64>, //bit field
 }
@@ -84,7 +84,7 @@ pub struct Interaction { //https://discord.com/developers/docs/interactions/rece
 }
 
 #[derive(Deserialize, Serialize, Debug)]
-pub struct InteractionData { //combination of ApplicationCommandData, MessageComponentData, ModalSubmitData, and ApplicationCommandInteractionDataOption
+pub struct InteractionData { //combination of ApplicationCommandData, MessageComponentResponseData, ModalSubmitData, and ApplicationCommandInteractionDataOption
     pub id: Option<String>,
     pub name: String,
     pub options: Option<Vec<ApplicationCommandInteractionDataOption>>,
@@ -99,7 +99,7 @@ pub struct InteractionData { //combination of ApplicationCommandData, MessageCom
 pub enum InteractionType { //https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-type
     Ping = 1,
     ApplicationCommand = 2,
-    MessageComponent = 3,
+    MessageComponentResponse = 3,
     ApplicationCommandAutocomplete = 4,
     ModalSubmit = 5,
 }
@@ -112,7 +112,7 @@ pub struct ApplicationCommandData { //https://discord.com/developers/docs/intera
 }
 
 #[derive(Deserialize, Serialize)]
-pub struct MessageComponentData { //https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-message-component-data-structure
+pub struct MessageComponentResponseData { //https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-message-component-data-structure
 
 }
 
@@ -197,8 +197,48 @@ pub struct Embed { // https://discord.com/developers/docs/resources/channel#embe
 }
 
 #[derive(Deserialize, Serialize, Clone)]
-pub struct Component { 
+pub struct ComponentResponse { // https://discord.com/developers/docs/interactions/message-components
+    #[serde(rename = "type")]
+    pub component_callback_type: ComponentCallbackType,
+    pub components: Option<Vec<Component>>
+}
+
+#[derive(Serialize_repr, Deserialize_repr, Clone)]
+#[repr(u8)]
+pub enum ComponentCallbackType { // https://discord.com/developers/docs/interactions/message-components#component-object-component-types
+    ActionRow = 1,
+    Button = 2,
+    StringSelect = 3,
+    TextInput = 4,
+    UserSelect = 5,
+    RoleSelect = 6,
+    MentionableSelect = 7,
+    ChannelSelect = 8,
+}
+
+#[derive(Deserialize, Serialize, Clone)]
+pub struct ActionRows { // https://discord.com/developers/docs/interactions/message-components#action-rows
+
+}
+
+#[derive(Deserialize, Serialize, Clone)]
+pub struct Button { // https://discord.com/developers/docs/interactions/message-components
     
+}
+
+#[derive(Deserialize, Serialize, Clone)]
+pub struct SelectMenu { // https://discord.com/developers/docs/interactions/message-components#action-rows
+
+}
+
+#[derive(Deserialize, Serialize, Clone)]
+pub struct TextInput { // https://discord.com/developers/docs/interactions/message-components#text-inputs-text-input-structure
+    
+}
+
+#[derive(Deserialize, Serialize, Clone)]
+pub struct Component { // Combo of action, button select, textinput
+
 }
 
 #[derive(Deserialize, Serialize, Clone)]
@@ -218,7 +258,7 @@ pub struct CallbackData { //combine MessagesInteractionCallbackData and Autocomp
     pub choices: Option<Vec<ApplicationCommandOptionChoice>>,
     pub content: Option<String>,
     pub embeds: Option<Vec<Embed>>,
-    pub components: Option<Vec<Component>>, 
+    pub components: Option<Vec<ComponentResponse>>, 
     pub attachments: Option<Vec<Attachment>>
 }
 

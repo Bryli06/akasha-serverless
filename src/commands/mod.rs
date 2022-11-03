@@ -7,6 +7,7 @@ use crate::utils::InteractionError;
 mod chances;    
 mod invite;
 mod about;
+mod characters;
 
 
 #[async_trait(?Send)]
