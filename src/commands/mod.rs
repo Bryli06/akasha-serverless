@@ -6,6 +6,8 @@ use crate::utils::InteractionError;
 
 mod chances;    
 mod invite;
+mod about;
+mod characters;
 
 
 #[async_trait(?Send)]
@@ -80,5 +82,6 @@ pub fn get_commands() -> Vec<Box<dyn Command + Sync>> {
     vec![
         Box::new(chances::Chances {}),
         Box::new(invite::Invite {}),
+        Box::new(about::About {}),
     ]
 }
