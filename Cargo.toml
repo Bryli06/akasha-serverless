@@ -28,6 +28,7 @@ serde = "1.0.145"
 thiserror = "1.0.37"
 serde_repr = "0.1.9"
 ndarray = "0.15.6"
+fftlib = {path = "../fftlib" }
 
 [profile.release]
 # Tell `rustc` to optimize for small code size.
