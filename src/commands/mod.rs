@@ -8,6 +8,7 @@ mod chances;
 mod invite;
 mod about;
 mod favonius;
+mod chance;
 // mod characters;
 
 
@@ -82,6 +83,7 @@ impl Input<'_> {
 pub fn get_commands() -> Vec<Box<dyn Command + Sync>> {
     vec![
         Box::new(chances::Chances {}),
+        Box::new(chance::Chance {}),
         Box::new(invite::Invite {}),
         Box::new(about::About {}),
         Box::new(favonius::Favonius {}),

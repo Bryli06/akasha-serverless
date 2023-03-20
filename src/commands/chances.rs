@@ -198,7 +198,7 @@ fn five_star_character(wishes: usize, pity: u64, guarentee: usize) -> (Option<u6
     (None, Embed {
         title: Some("Character chances calculator".to_string()),
         embed_type: Some(EmbedType::Rich),
-        description: Some("If you wish to understand the math behind this calculation, view the explanation [here](https://drive.google.com/file/d/1EECcjNVpfiOTqRoS48hHWqH2Ake902vq/view?usp=sharing). You can invite this bot at <https://kusanalimains.com/invite/>.".to_string()),
+        description: Some("If you wish to understand the math behind this calculation, view the explanation [here](https://drive.google.com/file/d/1EECcjNVpfiOTqRoS48hHWqH2Ake902vq/view?usp=sharing). Looking to pull for both a character and weapon? Use /chance (no s).".to_string()),
         url: None,
         color: Some(0x198754),
         footer: None,
@@ -295,7 +295,7 @@ fn five_star_weapon(wishes: usize, pity: u64) -> (Option<u64>, Embed) {
     })
 }
 
-fn round_sigfig(num: f64, sigfigs: isize) -> String {
+pub fn round_sigfig(num: f64, sigfigs: isize) -> String {
     if num == 0.0 {
         return "0.0000%".to_string()
     }
