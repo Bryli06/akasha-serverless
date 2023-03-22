@@ -99,7 +99,7 @@ impl Command for Chance {
     }
 
     async fn respond(&self, input: &Input) -> Result<MessagesInteractionCallbackData, InteractionError> {
-        let cons = input.get_options("character_cons").unwrap().as_u64().unwrap() as usize + 1;
+        let cons = input.get_options("character_cons").unwrap().as_u64().unwrap() as usize;
         let refine = input.get_options("weapon_refine").unwrap().as_u64().unwrap() as usize;
         let wishes = input.get_options("wishes").unwrap().as_u64().unwrap() as usize;
 
@@ -113,7 +113,7 @@ impl Command for Chance {
             image: None,
             thumbnail: None, 
             fields: Some(vec![EmbedField { 
-                name: format!("C{}R{} with {} wishes", cons-1, refine, wishes), 
+                name: format!("C{}R{} with {} wishes", cons, refine, wishes), 
                 value: round_sigfig(100.0 * full(wishes, 
                                                  input.get_options("character_pity").unwrap().as_u64().unwrap() as usize, 
                                                  input.get_options("weapon_pity").unwrap().as_u64().unwrap() as usize,
