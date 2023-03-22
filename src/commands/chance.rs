@@ -163,12 +163,12 @@ fn full(wishes: usize, char_pity: usize, weapon_pity: usize, refine: usize, cons
     assert!(char_pity < 90);
     assert!(weapon_pity < 77);
     let temp1 = weapon(weapon_pity,wishes, refine);
-    let weapon = temp1.slice(s![(weapon_pity+1) as i32..]);
+    let weapon = temp1.slice(s![(weapon_pity) as i32..]);
     let temp2 = five_star_character(char_pity, wishes, cons, false);
-    let char = temp2.slice(s![(char_pity+1) as i32..]);
+    let char = temp2.slice(s![(char_pity) as i32..]);
     let a = weapon.as_slice().unwrap();
     let b = char.as_slice().unwrap(); 
-    fftlib::fft::pmul(&a, &b)[..wishes].into_iter().sum::<f64>()
+    fftlib::fft::pmul(&a, &b)[..=wishes].into_iter().sum::<f64>()
 }
 
 fn five_star_character(pity: usize, wishes: usize, cons: usize, guarentee: bool) -> Array1<f64> {
