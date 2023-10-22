@@ -8,7 +8,7 @@ pub struct About {}
 #[async_trait(?Send)]
 impl Command for About {
     fn name(&self) -> String {
-        "about".to_string() 
+        "about".to_string()
     }
 
     fn description(&self) -> String {
@@ -27,12 +27,12 @@ impl Command for About {
         let embed = Embed {
             title: Some("About this bot".to_string()),
             embed_type: Some(EmbedType::Rich),
-            description: Some("This bot made by bryanli#2718 is the TC bot for [Kusanali mains](https://discord.gg/kusanali). You can invite the bot at <https://kusanalimains.com/invite/>. The source code is all open source and can be found [here](https://github.com/Bryli06/akasha-serverless). As this was designed to be a serverless discord bot, it is hosted for free on cloudflare workers!".to_string()),
+            description: Some("This bot made by Bryli06 is the TC bot for [Kusanali mains](https://discord.gg/kusanali). You can invite the bot [here](https://discord.com/api/oauth2/authorize?client_id=881355198180765736&permissions=0&scope=applications.commands%20bot). The source code is all open source and can be found [here](https://github.com/Bryli06/akasha-serverless). As this was designed to be a serverless discord bot, it is hosted for free on cloudflare workers!".to_string()),
             url: None,
             color: Some(0x198754),
             footer: None,
             image: None,
-            thumbnail: None, 
+            thumbnail: None,
             fields: None,
         };
 
