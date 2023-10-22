@@ -1,0 +1,21 @@
+name: Deploy to Cloudflare Workers
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+            - uses: actions/checkout@v3
+
+            - name: Deploy
+              env:
+                  CF_API_TOKEN: ${{ secrets.API_TOKEN }}
+              run: npm i -g wrangler && wrangler deploy
+
+            - name: Register Commands
+              run: curl -X POST https://${{ secrets.DOMAIN }}/register
