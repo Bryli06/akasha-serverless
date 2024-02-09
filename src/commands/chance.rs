@@ -29,7 +29,7 @@ impl Command for Chance {
                 option_type: ApplicationCommandOptionType::Integer,
                 choices: None,
                 min_value: Some(1),
-                max_value: Some(2508),
+                max_value: Some(2507),
                 min_length: None,
                 max_length: None,
                 options: None,
@@ -159,7 +159,7 @@ impl Command for Chance {
 }
 
 fn full(wishes: usize, char_pity: usize, weapon_pity: usize, refine: usize, cons: usize) -> f64 {
-    assert!(wishes <= 2508); // 2508 * 2 + 78 + 91 - 1 = 5184 = ugly number
+    assert!(wishes < 2508); // 2508 * 2 + 78 + 91 - 1 = 5184 = ugly number
     assert!(char_pity < 90);
     assert!(weapon_pity < 77);
     let temp1 = weapon(weapon_pity,wishes, refine);

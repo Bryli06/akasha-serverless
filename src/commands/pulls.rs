@@ -173,7 +173,7 @@ fn calc(prob: f64, char_pity: usize, weapon_pity: usize, refine: usize, cons: us
     assert!(prob >= 0.0 && prob <= 1.0); // 2508 * 2 + 78 + 91 - 1 = 5184 = ugly number
     assert!(char_pity < 90);
     assert!(weapon_pity < 77);
-    let wishes = 2508;
+    let wishes = 2507;
 
     let arr = match (cons, refine) {
         (100, 100) => [1.0].to_vec(),
