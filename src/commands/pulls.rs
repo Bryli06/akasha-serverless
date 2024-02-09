@@ -184,7 +184,7 @@ fn calc(prob: f64, char_pity: usize, weapon_pity: usize, refine: usize, cons: us
 
     let mut sum = 0.0;
     let mut num = 0;
-    while sum < prob && num <= wishes {
+    while sum * 1.001 < prob && num <= wishes {
         sum += arr[num];
         num += 1;
     }
