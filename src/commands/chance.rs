@@ -27,7 +27,7 @@ impl Command for Chance {
                 description: "How many wishes do you have?".to_string(),
                 required: Some(true),
                 option_type: ApplicationCommandOptionType::Integer,
-                choices: None,  
+                choices: None,
                 min_value: Some(1),
                 max_value: Some(2508),
                 min_length: None,
@@ -41,7 +41,7 @@ impl Command for Chance {
                 description: "What character pity are you at right now?".to_string(),
                 required: Some(true),
                 option_type: ApplicationCommandOptionType::Integer,
-                choices: None,  
+                choices: None,
                 min_value: Some(0),
                 max_value: Some(89),
                 min_length: None,
@@ -55,7 +55,7 @@ impl Command for Chance {
                 description: "What character pity are you at right now?".to_string(),
                 required: Some(true),
                 option_type: ApplicationCommandOptionType::Integer,
-                choices: None,  
+                choices: None,
                 min_value: Some(0),
                 max_value: Some(76),
                 min_length: None,
@@ -69,7 +69,7 @@ impl Command for Chance {
                 description: "What character constellation are you aiming for?".to_string(),
                 required: Some(true),
                 option_type: ApplicationCommandOptionType::Integer,
-                choices: None,  
+                choices: None,
                 min_value: Some(0),
                 max_value: Some(6),
                 min_length: None,
@@ -83,7 +83,7 @@ impl Command for Chance {
                 description: "What weapon refinement are you aiming for?".to_string(),
                 required: Some(true),
                 option_type: ApplicationCommandOptionType::Integer,
-                choices: None,  
+                choices: None,
                 min_value: Some(1),
                 max_value: Some(5),
                 min_length: None,
@@ -91,7 +91,7 @@ impl Command for Chance {
                 options: None,
                 channel_types: None,
             },
-        ]) 
+        ])
     }
 
     async fn autocomplete(&self, input: &super::Input) -> Result<Option<crate::discord::AutocompleteInteractionCallbackData>, crate::utils::InteractionError> {
@@ -111,25 +111,25 @@ impl Command for Chance {
             color: Some(0x198754),
             footer: None,
             image: None,
-            thumbnail: None, 
-            fields: Some(vec![EmbedField { 
-                name: format!("C{}R{} with {} wishes", cons, refine, wishes), 
-                value: round_sigfig(100.0 * full(wishes, 
-                                                 input.get_options("character_pity").unwrap().as_u64().unwrap() as usize, 
+            thumbnail: None,
+            fields: Some(vec![EmbedField {
+                name: format!("C{}R{} with {} wishes", cons, refine, wishes),
+                value: round_sigfig(100.0 * full(wishes,
+                                                 input.get_options("character_pity").unwrap().as_u64().unwrap() as usize,
                                                  input.get_options("weapon_pity").unwrap().as_u64().unwrap() as usize,
-                                                 refine, cons), 4), 
-                inline: Some(true), 
+                                                 refine, cons), 4),
+                inline: Some(true),
             }]),
         };
 
         /*
             match input.get_options("banner").unwrap().as_u64() {
             Some(0) => five_star_character(
-                input.get_options("wishes").unwrap().as_u64().unwrap() as usize, 
-                input.get_options("pity").unwrap().as_u64().unwrap(), 
+                input.get_options("wishes").unwrap().as_u64().unwrap() as usize,
+                input.get_options("pity").unwrap().as_u64().unwrap(),
                 input.get_options("guarantee").unwrap().as_u64().unwrap() as usize,),
             Some(1) => five_star_weapon(
-                input.get_options("wishes").unwrap().as_u64().unwrap() as usize, 
+                input.get_options("wishes").unwrap().as_u64().unwrap() as usize,
                 input.get_options("pity").unwrap().as_u64().unwrap(),),
             _ => {
                 console_log!("Unknown banner");
@@ -141,7 +141,7 @@ impl Command for Chance {
                     color: Some(0xcc0000),
                     footer: None,
                     image: None,
-                    thumbnail: None, 
+                    thumbnail: None,
                     fields: None,
                 })
             }
@@ -167,11 +167,11 @@ fn full(wishes: usize, char_pity: usize, weapon_pity: usize, refine: usize, cons
     let temp2 = five_star_character(char_pity, wishes, cons, false);
     let char = temp2.slice(s![(char_pity) as i32..]);
     let a = weapon.as_slice().unwrap();
-    let b = char.as_slice().unwrap(); 
+    let b = char.as_slice().unwrap();
     fftlib::fft::pmul(&a, &b)[..=wishes].into_iter().sum::<f64>()
 }
 
-fn five_star_character(pity: usize, wishes: usize, cons: usize, guarentee: bool) -> Array1<f64> {
+pub fn five_star_character(pity: usize, wishes: usize, cons: usize, guarentee: bool) -> Array1<f64> {
     let p = 0.006;
     let ramp_rate = 0.06;
 
@@ -194,7 +194,7 @@ fn five_star_character(pity: usize, wishes: usize, cons: usize, guarentee: bool)
         }
         temp
     };
-    
+
     let pity_sum = base_gf_coefficents.slice(s![1.. (pity+1) as i32]).sum();
 
     let mut gf_coefficents = Array2::<f64>::zeros((2*cons+2, pity as usize + wishes + 92));
@@ -209,7 +209,7 @@ fn five_star_character(pity: usize, wishes: usize, cons: usize, guarentee: bool)
     }
 
     let mut path_gf_coefficents = Array2::<f64>::zeros((cons + 1, 2*cons+3));
-    
+
     path_gf_coefficents.index_axis_mut(Axis(0), 0).slice_mut(s![0i32..3]).assign(&arr1(
             if guarentee {
                 &[0.0, 1.0, 0.0]
@@ -228,15 +228,15 @@ fn five_star_character(pity: usize, wishes: usize, cons: usize, guarentee: bool)
 
     let mut ans = Array1::<f64>::zeros(pity + wishes + 92);
 
-    path_gf_coefficents.index_axis(Axis(0), cons).slice(s![1i32..]).iter().enumerate().for_each(|(i, x)| { 
+    path_gf_coefficents.index_axis(Axis(0), cons).slice(s![1i32..]).iter().enumerate().for_each(|(i, x)| {
         ans.scaled_add(*x, &gf_coefficents.index_axis_mut(Axis(0), i));
     });
 
     ans
 }
 
-fn weapon(pity: usize, wishes: usize, refine: usize) -> Array1<f64> {
-    
+pub fn weapon(pity: usize, wishes: usize, refine: usize) -> Array1<f64> {
+
     let p = 0.007;
     let ramp_rate = 0.07;
 
@@ -273,7 +273,7 @@ fn weapon(pity: usize, wishes: usize, refine: usize) -> Array1<f64> {
     }
 
     let mut path_gf_coefficents = Array2::<f64>::zeros((5, 3*refine + 1));
-    
+
     path_gf_coefficents.index_axis_mut(Axis(0), 0).slice_mut(s![0i32..4]).assign(&arr1(&[0.0, 0.375, 0.265625, 0.359375]));
 
     for i in 1..refine {
@@ -286,9 +286,9 @@ fn weapon(pity: usize, wishes: usize, refine: usize) -> Array1<f64> {
 
     let mut ans = Array1::<f64>::zeros(pity + wishes + 79);
 
-    path_gf_coefficents.index_axis(Axis(0), refine-1).slice(s![1i32..]).iter().enumerate().for_each(|(i, x)| { 
+    path_gf_coefficents.index_axis(Axis(0), refine-1).slice(s![1i32..]).iter().enumerate().for_each(|(i, x)| {
         ans.scaled_add(*x, &gf_coefficents.index_axis_mut(Axis(0), i));
     });
 
-    ans    
+    ans
 }

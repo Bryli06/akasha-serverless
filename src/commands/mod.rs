@@ -4,18 +4,19 @@ use crate::discord::*;
 
 use crate::utils::InteractionError;
 
-mod chances;    
+mod chances;
 mod invite;
 mod about;
 mod favonius;
 mod chance;
+mod pulls;
 // mod characters;
 
 
 #[async_trait(?Send)]
 pub trait Command {
     fn name(&self) -> String {
-       unimplemented!() 
+       unimplemented!()
     }
 
     fn description(&self) -> String {
@@ -84,6 +85,7 @@ pub fn get_commands() -> Vec<Box<dyn Command + Sync>> {
     vec![
         Box::new(chances::Chances {}),
         Box::new(chance::Chance {}),
+        Box::new(pulls::Pulls {}),
         Box::new(invite::Invite {}),
         Box::new(about::About {}),
         Box::new(favonius::Favonius {}),
