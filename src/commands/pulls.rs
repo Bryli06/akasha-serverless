@@ -16,7 +16,7 @@ impl Command for Pulls {
     }
 
     fn description(&self) -> String {
-        "Get the necessary number of pulls to get a character and weapon combonation with a specific probability".to_string()
+        "Get the number of pulls needed for a character and weapon combinations with a specific probability".to_string()
     }
 
     fn options(&self) -> Option<Vec<ApplicationCommandOption>> {
