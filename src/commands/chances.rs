@@ -33,9 +33,9 @@ impl Command for Chances {
                     },
                     ApplicationCommandOptionChoice {
                         name: "5 star Weapon".to_string(),
-                        value: 1.into(), 
+                        value: 1.into(),
                     },
-                ]),  
+                ]),
                 min_value: None,
                 max_value: None,
                 min_length: None,
@@ -49,7 +49,7 @@ impl Command for Chances {
                 description: "How many wishes do you have?".to_string(),
                 required: Some(true),
                 option_type: ApplicationCommandOptionType::Integer,
-                choices: None,  
+                choices: None,
                 min_value: Some(1),
                 max_value: Some(1260),
                 min_length: None,
@@ -63,7 +63,7 @@ impl Command for Chances {
                 description: "What pity are you at right now?".to_string(),
                 required: Some(true),
                 option_type: ApplicationCommandOptionType::Integer,
-                choices: None,  
+                choices: None,
                 min_value: Some(0),
                 max_value: Some(89),
                 min_length: None,
@@ -84,13 +84,13 @@ impl Command for Chances {
                     },
                     ApplicationCommandOptionChoice {
                         name: "No".to_string(),
-                        value: 0.into(), 
+                        value: 0.into(),
                     },
                     ApplicationCommandOptionChoice {
                         name: "N/A".to_string(),
                         value: 0.into(),
                     },
-                ]),  
+                ]),
                 min_value: None,
                 max_value: None,
                 min_length: None,
@@ -98,7 +98,7 @@ impl Command for Chances {
                 options: None,
                 channel_types: None,
             },
-        ]) 
+        ])
     }
 
     async fn autocomplete(&self, input: &super::Input) -> Result<Option<crate::discord::AutocompleteInteractionCallbackData>, crate::utils::InteractionError> {
@@ -108,11 +108,11 @@ impl Command for Chances {
     async fn respond(&self, input: &Input) -> Result<MessagesInteractionCallbackData, InteractionError> {
         let (flags, embed) = match input.get_options("banner").unwrap().as_u64() {
             Some(0) => five_star_character(
-                input.get_options("wishes").unwrap().as_u64().unwrap() as usize, 
-                input.get_options("pity").unwrap().as_u64().unwrap(), 
+                input.get_options("wishes").unwrap().as_u64().unwrap() as usize,
+                input.get_options("pity").unwrap().as_u64().unwrap(),
                 input.get_options("guarantee").unwrap().as_u64().unwrap() as usize,),
             Some(1) => five_star_weapon(
-                input.get_options("wishes").unwrap().as_u64().unwrap() as usize, 
+                input.get_options("wishes").unwrap().as_u64().unwrap() as usize,
                 input.get_options("pity").unwrap().as_u64().unwrap(),),
             _ => {
                 console_log!("Unknown banner");
@@ -124,7 +124,7 @@ impl Command for Chances {
                     color: Some(0xcc0000),
                     footer: None,
                     image: None,
-                    thumbnail: None, 
+                    thumbnail: None,
                     fields: None,
                 })
             }
@@ -179,19 +179,19 @@ fn five_star_character(wishes: usize, pity: u64, guarentee: usize) -> (Option<u6
     }
 
     let five_star_prob = gf_coefficents.slice(s![.., ..(wishes+pity as usize+1)]).sum_axis(Axis(1));
-    
-    let mut cons: Vec<EmbedField> = Vec::new(); 
+
+    let mut cons: Vec<EmbedField> = Vec::new();
     for i in 0..7 {
         let mut temp = 0.0;
         for j in 0..(i+2-guarentee) {
             temp += 100.0 * (1..=j.min((i + 1 - guarentee) - j))
-                .fold(1, |acc, val| acc * ((i + 1 - guarentee) - val + 1) / val) as f64 
+                .fold(1, |acc, val| acc * ((i + 1 - guarentee) - val + 1) / val) as f64
                 / (1 << (i + 1 - guarentee)) as f64 * five_star_prob[i+j];
         }
-        cons.push(EmbedField { 
-            name: format!("C{}", i), 
-            value: round_sigfig(temp, 4), 
-            inline: Some(true), 
+        cons.push(EmbedField {
+            name: format!("C{}", i),
+            value: round_sigfig(temp, 4),
+            inline: Some(true),
         })
     }
 
@@ -203,7 +203,7 @@ fn five_star_character(wishes: usize, pity: u64, guarentee: usize) -> (Option<u6
         color: Some(0x198754),
         footer: None,
         image: None,
-        thumbnail: None, 
+        thumbnail: None,
         fields: Some(cons),
     })
 }
@@ -218,7 +218,7 @@ fn five_star_weapon(wishes: usize, pity: u64) -> (Option<u64>, Embed) {
                     color: Some(0xcc0000),
                     footer: None,
                     image: None,
-                    thumbnail: None, 
+                    thumbnail: None,
                     fields: None,
                 })
     }
@@ -261,7 +261,7 @@ fn five_star_weapon(wishes: usize, pity: u64) -> (Option<u64>, Embed) {
     let five_star_prob = gf_coefficents.slice(s![.., ..(wishes+pity as usize+1)]).sum_axis(Axis(1));
 
     let mut path_gf_coefficents = Array2::<f64>::zeros((5, 16));
-    
+
     path_gf_coefficents.index_axis_mut(Axis(0), 0).slice_mut(s![0i32..4]).assign(&arr1(&[0.0, 0.375, 0.265625, 0.359375]));
 
     for i in 1..5 {
@@ -272,25 +272,25 @@ fn five_star_weapon(wishes: usize, pity: u64) -> (Option<u64>, Embed) {
         }
     }
 
-    let mut cons: Vec<EmbedField> = Vec::new(); 
+    let mut cons: Vec<EmbedField> = Vec::new();
     for i in 0..5 {
-        cons.push(EmbedField { 
-            name: format!("R{}", i+1), 
+        cons.push(EmbedField {
+            name: format!("R{}", i+1),
             value: round_sigfig(100.0 * path_gf_coefficents.index_axis_mut(Axis(0), i).slice(s![1i32..])
-                .dot(&five_star_prob), 4), 
-            inline: Some(true), 
+                .dot(&five_star_prob), 4),
+            inline: Some(true),
         })
     }
 
     (None, Embed {
         title: Some("Weapon chances calculator".to_string()),
         embed_type: Some(EmbedType::Rich),
-        description: Some("If you wish to understand the math behind this calculation, view the explanation [here](https://drive.google.com/file/d/1EECcjNVpfiOTqRoS48hHWqH2Ake902vq/view?usp=sharing). You can invite this bot at <https://kusanalimains.com/invite/>.".to_string()),
+        description: Some("If you wish to understand the math behind this calculation, view the explanation [here](https://drive.google.com/file/d/1EECcjNVpfiOTqRoS48hHWqH2Ake902vq/view?usp=sharing). Looking to pull for both a character and weapon? Use /chance (no s).".to_string()),
         url: None,
         color: Some(0x198754),
         footer: None,
         image: None,
-        thumbnail: None, 
+        thumbnail: None,
         fields: Some(cons),
     })
 }
@@ -301,6 +301,6 @@ pub fn round_sigfig(num: f64, sigfigs: isize) -> String {
     }
     let leading_digits = num.abs().log10().ceil() as isize; // Treat fractions as negative leading digits so we have the correct total number of significant digits
     let trailing_digits = if leading_digits > sigfigs { 0 } else { (sigfigs - leading_digits) as usize };
-    
+
     format!("{:.*}%", trailing_digits, num)
 }
