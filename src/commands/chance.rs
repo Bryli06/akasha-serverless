@@ -274,13 +274,13 @@ pub fn weapon(pity: usize, wishes: usize, refine: usize) -> Array1<f64> {
 
     let mut path_gf_coefficents = Array2::<f64>::zeros((5, 2*refine + 1));
 
-    path_gf_coefficents.index_axis_mut(Axis(0), 0).slice_mut(s![0i32..4]).assign(&arr1(&[0.0, 0.375, 0.625]));
+    path_gf_coefficents.index_axis_mut(Axis(0), 0).slice_mut(s![0i32..3]).assign(&arr1(&[0.0, 0.375, 0.625]));
 
     for i in 1..refine {
         for j in 1..2*i+1 {
             let temp = path_gf_coefficents[[i-1, j]];
 
-            path_gf_coefficents.index_axis_mut(Axis(0), i).slice_mut(s![j as i32 .. (j + 4) as i32]).scaled_add(temp, &arr1(&[0.0, 0.375, 0.625]));
+            path_gf_coefficents.index_axis_mut(Axis(0), i).slice_mut(s![j as i32 .. (j + 3) as i32]).scaled_add(temp, &arr1(&[0.0, 0.375, 0.625]));
         }
     }
 
