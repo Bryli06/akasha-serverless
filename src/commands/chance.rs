@@ -215,14 +215,14 @@ pub fn five_star_character(pity: usize, wishes: usize, cons: usize, guarentee: b
                 &[0.0, 1.0, 0.0]
             }
             else {
-                &[0.0, 0.5, 0.5]
+                &[0.0, 0.55, 0.45]
             }));
 
     for i in 1..cons + 1{
         for j in 1..2*i+1 {
             let temp = path_gf_coefficents[[i-1, j]];
 
-            path_gf_coefficents.index_axis_mut(Axis(0), i).slice_mut(s![j as i32 .. (j + 3) as i32]).scaled_add(temp, &arr1(&[0.0, 0.5, 0.5]));
+            path_gf_coefficents.index_axis_mut(Axis(0), i).slice_mut(s![j as i32 .. (j + 3) as i32]).scaled_add(temp, &arr1(&[0.0, 0.55, 0.45]));
         }
     }
 
@@ -261,26 +261,26 @@ pub fn weapon(pity: usize, wishes: usize, refine: usize) -> Array1<f64> {
     };
     let pity_sum = base_gf_coefficents.slice(s![1.. (pity+1) as i32]).sum();
 
-    let mut gf_coefficents = Array2::<f64>::zeros((3*refine, pity as usize + wishes + 79));
+    let mut gf_coefficents = Array2::<f64>::zeros((2*refine, pity as usize + wishes + 79));
 
     gf_coefficents.index_axis_mut(Axis(0), 0).slice_mut(s![(pity+1) as i32 .. 78]).assign(&(&base_gf_coefficents.slice(s![(pity+1) as i32 .. ])/(1.0 - pity_sum)));
 
-    for i in 1..3*refine {
+    for i in 1..2*refine {
         for j in 1..cmp::min(77*i+1, wishes+pity as usize) {
             let temp = gf_coefficents[[i-1, j]];
             gf_coefficents.index_axis_mut(Axis(0), i).slice_mut(s![j as i32 .. (j + 78) as i32]).scaled_add(temp, &base_gf_coefficents);
         }
     }
 
-    let mut path_gf_coefficents = Array2::<f64>::zeros((5, 3*refine + 1));
+    let mut path_gf_coefficents = Array2::<f64>::zeros((5, 2*refine + 1));
 
-    path_gf_coefficents.index_axis_mut(Axis(0), 0).slice_mut(s![0i32..4]).assign(&arr1(&[0.0, 0.375, 0.265625, 0.359375]));
+    path_gf_coefficents.index_axis_mut(Axis(0), 0).slice_mut(s![0i32..4]).assign(&arr1(&[0.0, 0.375, 0.625]));
 
     for i in 1..refine {
-        for j in 1..3*i+1 {
+        for j in 1..2*i+1 {
             let temp = path_gf_coefficents[[i-1, j]];
 
-            path_gf_coefficents.index_axis_mut(Axis(0), i).slice_mut(s![j as i32 .. (j + 4) as i32]).scaled_add(temp, &arr1(&[0.0, 0.375, 0.265625, 0.359375]));
+            path_gf_coefficents.index_axis_mut(Axis(0), i).slice_mut(s![j as i32 .. (j + 4) as i32]).scaled_add(temp, &arr1(&[0.0, 0.375, 0.625]));
         }
     }
 

@@ -180,17 +180,38 @@ fn five_star_character(wishes: usize, pity: u64, guarentee: usize) -> (Option<u6
 
     let five_star_prob = gf_coefficents.slice(s![.., ..(wishes+pity as usize+1)]).sum_axis(Axis(1));
 
+    let mut path_gf_coefficents = Array2::<f64>::zeros((7, 2*6+3));
+
+    path_gf_coefficents.index_axis_mut(Axis(0), 0).slice_mut(s![0i32..3]).assign(&arr1(
+            if guarentee != 0 {
+                &[0.0, 1.0, 0.0]
+            }
+            else {
+                &[0.0, 0.55, 0.45]
+            }));
+
+    for i in 1..6 + 1{
+        for j in 1..2*i+1 {
+            let temp = path_gf_coefficents[[i-1, j]];
+
+            path_gf_coefficents.index_axis_mut(Axis(0), i).slice_mut(s![j as i32 .. (j + 3) as i32]).scaled_add(temp, &arr1(&[0.0, 0.55, 0.45]));
+        }
+    }
+
     let mut cons: Vec<EmbedField> = Vec::new();
     for i in 0..7 {
+        /*
         let mut temp = 0.0;
         for j in 0..(i+2-guarentee) {
             temp += 100.0 * (1..=j.min((i + 1 - guarentee) - j))
                 .fold(1, |acc, val| acc * ((i + 1 - guarentee) - val + 1) / val) as f64
                 / (1 << (i + 1 - guarentee)) as f64 * five_star_prob[i+j];
         }
+        */
         cons.push(EmbedField {
             name: format!("C{}", i),
-            value: round_sigfig(temp, 4),
+            value: round_sigfig(100.0 * path_gf_coefficents.index_axis_mut(Axis(0), i).slice(s![1i32..])
+                .dot(&five_star_prob), 4),
             inline: Some(true),
         })
     }
@@ -247,11 +268,11 @@ fn five_star_weapon(wishes: usize, pity: u64) -> (Option<u64>, Embed) {
     };
     let pity_sum = base_gf_coefficents.slice(s![1.. (pity+1) as i32]).sum();
 
-    let mut gf_coefficents = Array2::<f64>::zeros((15, pity as usize + wishes + 79));
+    let mut gf_coefficents = Array2::<f64>::zeros((10, pity as usize + wishes + 79));
 
     gf_coefficents.index_axis_mut(Axis(0), 0).slice_mut(s![(pity+1) as i32 .. 78]).assign(&(&base_gf_coefficents.slice(s![(pity+1) as i32 .. ])/(1.0 - pity_sum)));
 
-    for i in 1..15 {
+    for i in 1..10 {
         for j in 1..cmp::min(77*i+1, wishes+pity as usize) {
             let temp = gf_coefficents[[i-1, j]];
             gf_coefficents.index_axis_mut(Axis(0), i).slice_mut(s![j as i32 .. (j + 78) as i32]).scaled_add(temp, &base_gf_coefficents);
@@ -260,12 +281,12 @@ fn five_star_weapon(wishes: usize, pity: u64) -> (Option<u64>, Embed) {
 
     let five_star_prob = gf_coefficents.slice(s![.., ..(wishes+pity as usize+1)]).sum_axis(Axis(1));
 
-    let mut path_gf_coefficents = Array2::<f64>::zeros((5, 16));
+    let mut path_gf_coefficents = Array2::<f64>::zeros((5, 11));
 
-    path_gf_coefficents.index_axis_mut(Axis(0), 0).slice_mut(s![0i32..4]).assign(&arr1(&[0.0, 0.375, 0.265625, 0.359375]));
+    path_gf_coefficents.index_axis_mut(Axis(0), 0).slice_mut(s![0i32..4]).assign(&arr1(&[0.0, 0.375, 0.625]));
 
     for i in 1..5 {
-        for j in 1..3*i+1 {
+        for j in 1..2*i+1 {
             let temp = path_gf_coefficents[[i-1, j]];
 
             path_gf_coefficents.index_axis_mut(Axis(0), i).slice_mut(s![j as i32 .. (j + 4) as i32]).scaled_add(temp, &arr1(&[0.0, 0.375, 0.265625, 0.359375]));
